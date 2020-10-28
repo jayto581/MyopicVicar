@@ -2,6 +2,19 @@ $(document).ready(function() {
   var app_name = window.location.hostname;
   // advert control for freereg application
   if (app_name.includes('freereg')) {
+    //Default set Non personalized Adverts
+      if ((getCookie('userAdPersonalization') === null) || (getCookie('userAdPersonalization') == 'unknown')) {
+        setCookie('userAdPersonalization', 'unknown', 365 );
+       };
+    // Personalized Advert
+      if (getCookie('userAdPersonalization') == 1) {
+         //update_personalized_google_adverts('accept');
+        $(".mm_adverts").show();
+      }
+    //Non Personalized Advert
+      if (getCookie('userAdPersonalization') == 0) {
+        $(".mm_adverts").hide();
+      };
   }
 
   //------------------------------------------------------------//
