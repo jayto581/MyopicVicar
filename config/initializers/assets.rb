@@ -26,11 +26,9 @@ Rails.application.configure do
   config.assets.precompile += %w[html5shiv.js]
   config.assets.precompile += %w[spin.min.js]
   config.assets.precompile += %w[ladda.min.js]
-  config.assets.precompile += %w[ads.js]
-  config.assets.precompile += %w[adsbygoogle.js]
+  config.assets.precompile += %w[prebis-ads.js]
   config.assets.precompile += %w[freecen_coverage_graph.js]
   config.assets.precompile += %w[styles/css/donate_icon.css]
   config.assets.precompile += %w[cookie_control.js]
   config.assets.precompile += %w[advert_control.js]
-
 end
