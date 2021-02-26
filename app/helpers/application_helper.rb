@@ -583,23 +583,19 @@ module ApplicationHelper
   def fullwidth_adsense_freereg
     banner = <<-HTML
     <script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-    (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1;
-    </script>
     <ins class="adsbygoogle adSenseBanner"
     style="display:inline-block;width:728px;height:90px"
     data-ad-client="#{data_ad_client}"
     data-ad-slot="#{data_ad_slot_header}">
     </ins>
     <script>
-      (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
+      /*(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
       window.pg=window.pg||[];pg.acq=pg.acq||[]; // build consent queue
       pg.acq.push(function() {
       // add code here that should be executed after consent is obtained
         (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-      }
-        (adsbygoogle = window.adsbygoogle || []).push({});
-        (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=0;
+      }*/
+      (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
     HTML
     if Rails.env.development?
@@ -613,9 +609,7 @@ module ApplicationHelper
   def fullwidth_adsense_freecen
     banner = <<-HTML
     <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    <script>
-    (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1;
-    </script>
+    
     <!-- FreeCEN2 Transcriber Registration (Responsive) -->
     <ins class="adsbygoogle adSenseBanner"
     style="display:inline-block;width:728px;height:90px"
@@ -623,14 +617,13 @@ module ApplicationHelper
     data-ad-slot="#{data_ad_slot_fullwidth}">
     </ins>
     <script>
-      (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
+      /*(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
       window.pg=window.pg||[];pg.acq=pg.acq||[]; // build consent queue
       pg.acq.push(function() {
       // add code here that should be executed after consent is obtained
         (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-      })
+      })*/
       (adsbygoogle = window.adsbygoogle || []).push({});
-      (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=0;
     </script>
         HTML
         if Rails.env.development?
@@ -644,23 +637,19 @@ module ApplicationHelper
                     def adsence_right_side_banner
                       banner = <<-HTML
                       <script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                      <script>
-                      (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1;
-                      </script>
                       <ins class="adsbygoogle float--right"
                       style="display:inline-block;width:300px;height:600px"
                       data-ad-client = "#{data_ad_client}"
                       data-ad-slot = "#{app_advert['data_ad_slot_side']}">
                       </ins>
                       <script>
-                        (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
+                        /*(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
                         window.pg=window.pg||[];pg.acq=pg.acq||[]; // build consent queue
                         pg.acq.push(function() {
                         // add code here that should be executed after consent is obtained
                           (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-                        })
+                        })*/
                         (adsbygoogle = window.adsbygoogle || []).push({});
-                        (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=0;
                           </script>
                           HTML
                           if Rails.env.development?
@@ -675,9 +664,6 @@ module ApplicationHelper
                           @data_ad_slot = current_page?(freecen_coverage_path) ? data_ad_slot_coverage : data_ad_slot_google_advert
                           banner = <<-HTML
                           <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                          <script>
-                          (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1;
-                          </script>
                           <!-- Responsive ad -->
                           <ins class="adsbygoogle adSenseBanner"
                           style="display:inline-block;width:728px;height:90px"
@@ -685,14 +671,13 @@ module ApplicationHelper
                           data-ad-slot= "#{@data_ad_slot}">
                           </ins>
                           <script type="text/javascript">
-                            (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
+                            /*(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
                             window.pg=window.pg||[];pg.acq=pg.acq||[]; // build consent queue
                             pg.acq.push(function() {
                             // add code here that should be executed after consent is obtained
                               (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-                            })
+                            })*/
                             (adsbygoogle = window.adsbygoogle || []).push({});
-                            (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=0;
                           </script>
                               HTML
                               if Rails.env.development?
@@ -715,7 +700,6 @@ module ApplicationHelper
                                 //Google Adsense
                                 (adsbygoogle = window.adsbygoogle || []).push({
                                   google_ad_client: "#{data_ad_client}",
-                                  data-ad-slot: "#{data_ad_slot_header}",
                                   enable_page_level_ads: true
                                 });
                               </script>
@@ -726,21 +710,19 @@ module ApplicationHelper
                             def banner_header
                               banner = <<-HTML
                                 <script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                                <script> (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1; </script>
                                 <ins class="adsbygoogle adSenseBanner"
                                 style="display:inline-block;width:728px;height:90px"
                                 data-ad-client = "#{data_ad_client}"
                                 data-ad-slot = "#{data_ad_slot_header}">
                                 </ins>
                                 <script>
-                                  (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
+                                  /*(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
                                   window.pg=window.pg||[];pg.acq=pg.acq||[]; // build consent queue
                                   pg.acq.push(function() {
                                   // add code here that should be executed after consent is obtained
                                     (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-                                  })
+                                  })*/
                                     (adsbygoogle = window.adsbygoogle || []).push({});
-                                    (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=0;
                                 </script>
                                   HTML
                                   if Rails.env.development?
@@ -754,7 +736,6 @@ module ApplicationHelper
                                 def side_banners
                                   banner = <<-HTML
                                   <script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                                  <script> (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1; </script>
                                   <ins class="adsbygoogle adSenseBanner"
                                   style="display:inline-block;width:120px;height:600px"
                                   data-ad-client = "#{data_ad_client}"
@@ -769,7 +750,6 @@ module ApplicationHelper
                                       }
                                       };
                                       $(document).ready(function(){(adsbygoogle = window.adsbygoogle || []).push({})});
-                                      (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=0;
                                       </script>
                                       HTML
                                       if Rails.env.development?
@@ -783,7 +763,6 @@ module ApplicationHelper
                                     def side_banners_large
                                       banner = <<-HTML
                                       <script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                                      <script> (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1; </script>
                                       <ins class="adsbygoogle adSenseBanner"
                                       style="display:inline-block;width:300px;height:600px"
                                       data-ad-client = "#{data_ad_client}"
@@ -798,7 +777,6 @@ module ApplicationHelper
                                           }
                                           };
                                           $(document).ready(function(){(adsbygoogle = window.adsbygoogle || []).push({})});
-                                          (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=0;
                                           </script>
                                           HTML
                                           if Rails.env.development?
@@ -812,7 +790,6 @@ module ApplicationHelper
                                         def side_banners_square
                                           banner = <<-HTML
                                           <script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                                          <script> (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1; </script>
                                           <ins class="adsbygoogle adSenseBanner"
                                           style="display:inline-block;width:336px;height:280px"
                                           data-ad-client = "#{data_ad_client}"
@@ -827,7 +804,6 @@ module ApplicationHelper
                                               }
                                               };
                                               $(document).ready(function(){(adsbygoogle = window.adsbygoogle || []).push({})});
-                                              (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=0;
                                               </script>
                                               HTML
                                               if Rails.env.development?
