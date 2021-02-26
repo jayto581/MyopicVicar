@@ -15,7 +15,7 @@
         <script type="text/javascript" src="//cdn.pubguru.com/fb.js"></script>
       <% end %>
     <% end %>
-    <% if appname_downcase == 'freecen' %>
+    <%# if appname_downcase == 'freecen' %>
       <!-- Google Tag Manager -->
       <script>
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -25,7 +25,7 @@
           })(window,document,'script','dataLayer','<%= "#{gtm_key_value}"%>');
       </script>
       <!--End Google Tag Manager -->
-    <% end %>
+    <%# end %>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <meta charset="utf-8"/>
     <% if MyopicVicar::Application.config.template_set == 'freereg' %>
@@ -89,12 +89,12 @@
     <%= csrf_meta_tags %>
   </head>
   <body ontouchstart class="offcanvas  offcanvas--rev">
-    <% if appname_downcase == 'freecen' %>
+    <%# if appname_downcase == 'freecen' %>
       <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src='https://www.googletagmanager.com/ns.html?id=<%= "#{gtm_key_value}" %>'
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <!-- End Google Tag Manager (noscript) -->
-    <% end %>
+    <%# end %>
     
     <%# if appname_downcase == 'freebmd'%>
     <%#= render 'layouts/bmd_main_nav'%>
