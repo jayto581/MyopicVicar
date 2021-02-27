@@ -589,12 +589,6 @@ module ApplicationHelper
     data-ad-slot="#{data_ad_slot_header}">
     </ins>
     <script>
-      /*(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
-      window.pg=window.pg||[];pg.acq=pg.acq||[]; // build consent queue
-      pg.acq.push(function() {
-      // add code here that should be executed after consent is obtained
-        (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-      }*/
       (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
     HTML
@@ -617,12 +611,6 @@ module ApplicationHelper
     data-ad-slot="#{data_ad_slot_fullwidth}">
     </ins>
     <script>
-      /*(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
-      window.pg=window.pg||[];pg.acq=pg.acq||[]; // build consent queue
-      pg.acq.push(function() {
-      // add code here that should be executed after consent is obtained
-        (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-      })*/
       (adsbygoogle = window.adsbygoogle || []).push({});
     </script>
         HTML
@@ -643,14 +631,8 @@ module ApplicationHelper
                       data-ad-slot = "#{app_advert['data_ad_slot_side']}">
                       </ins>
                       <script>
-                        /*(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
-                        window.pg=window.pg||[];pg.acq=pg.acq||[]; // build consent queue
-                        pg.acq.push(function() {
-                        // add code here that should be executed after consent is obtained
-                          (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-                        })*/
                         (adsbygoogle = window.adsbygoogle || []).push({});
-                          </script>
+                      </script>
                           HTML
                           if Rails.env.development?
                             banner = <<-HTML
@@ -671,12 +653,6 @@ module ApplicationHelper
                           data-ad-slot= "#{@data_ad_slot}">
                           </ins>
                           <script type="text/javascript">
-                            /*(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
-                            window.pg=window.pg||[];pg.acq=pg.acq||[]; // build consent queue
-                            pg.acq.push(function() {
-                            // add code here that should be executed after consent is obtained
-                              (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-                            })*/
                             (adsbygoogle = window.adsbygoogle || []).push({});
                           </script>
                               HTML
@@ -716,12 +692,6 @@ module ApplicationHelper
                                 data-ad-slot = "#{data_ad_slot_header}">
                                 </ins>
                                 <script>
-                                  /*(adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
-                                  window.pg=window.pg||[];pg.acq=pg.acq||[]; // build consent queue
-                                  pg.acq.push(function() {
-                                  // add code here that should be executed after consent is obtained
-                                    (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-                                  })*/
                                     (adsbygoogle = window.adsbygoogle || []).push({});
                                 </script>
                                   HTML
