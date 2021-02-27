@@ -685,7 +685,7 @@ module ApplicationHelper
 
                             def banner_header
                               banner = <<-HTML
-                                <script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                                <script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
                                 <ins class="adsbygoogle adSenseBanner"
                                 style="display:inline-block;width:728px;height:90px"
                                 data-ad-client = "#{data_ad_client}"
