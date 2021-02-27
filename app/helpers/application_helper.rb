@@ -692,13 +692,11 @@ module ApplicationHelper
                                 data-ad-slot = "#{data_ad_slot_header}">
                                 </ins>
                                 <script>
-                                  window.update_personalized_header_adverts = function (preference) {
-                                    if(preference == 'accept') {
+                                    if(googlefc.ConsentStatusEnum == 1) {
                                         (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-                                    } else if(preference == 'deny') {
+                                    } else  {
                                         (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
                                     }
-                                  };
                                   $(document).ready(function(){(adsbygoogle = window.adsbygoogle || []).push({})});
                                 </script>
                                   HTML
