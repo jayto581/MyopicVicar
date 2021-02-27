@@ -685,14 +685,14 @@ module ApplicationHelper
 
                             def banner_header
                               banner = <<-HTML
-                                <script src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+                                <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
                                 <ins class="adsbygoogle adSenseBanner"
                                 style="display:inline-block;width:728px;height:90px"
                                 data-ad-client = "#{data_ad_client}"
                                 data-ad-slot = "#{data_ad_slot_header}">
                                 </ins>
                                 <script>
-                                  $(document).ready(function(){(adsbygoogle = window.adsbygoogle || []).push({})});
+                                  (adsbygoogle = window.adsbygoogle || []).push({});
                                 </script>
                                   HTML
                                   if Rails.env.development?
