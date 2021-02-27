@@ -692,7 +692,14 @@ module ApplicationHelper
                                 data-ad-slot = "#{data_ad_slot_header}">
                                 </ins>
                                 <script>
-                                    (adsbygoogle = window.adsbygoogle || []).push({});
+                                  window.update_personalized_header_adverts = function (preference) {
+                                    if(preference == 'accept') {
+                                        (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
+                                    } else if(preference == 'deny') {
+                                        (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
+                                    }
+                                  };
+                                  $(document).ready(function(){(adsbygoogle = window.adsbygoogle || []).push({})});
                                 </script>
                                   HTML
                                   if Rails.env.development?
