@@ -24,6 +24,15 @@
           ' www.googletagmanager.com/gtm.'+'js?id='+i+dl;f.parentNode.insertBefore(j,f);
           })(window,document,'script','dataLayer','<%= "#{gtm_key_value}"%>');
       </script>
+
+      <script async src='https://www.googletagmanager.com/gtag/js?id=<%= "#{gtm_key_value}"%>'></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', '<%= "#{gtm_key_value}"%>');
+      </script>
       <!--End Google Tag Manager -->
     <%# end %>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
@@ -91,8 +100,10 @@
   <body ontouchstart class="offcanvas  offcanvas--rev">
     <%# if appname_downcase == 'freecen' %>
       <!-- Google Tag Manager (noscript) -->
-      <noscript><iframe src='https://www.googletagmanager.com/ns.html?id=<%= "#{gtm_key_value}" %>'
-      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <noscript>
+        <iframe src='https://www.googletagmanager.com/ns.html?id=<%= "#{gtm_key_value}" %>'
+      height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
       <!-- End Google Tag Manager (noscript) -->
     <%# end %>
     
