@@ -6,21 +6,7 @@
       <% unless device_type == :mobile%>
         <div class="bnner-horz cen_unit_header cen_unit">
           <a href ="https://www.freeukgenealogy.org.uk/help-us-keep-history-free/?_ga=2.145101431.251616756.1548792447-1735478806.1548792447"><%= image_tag 'png/header-donate.png', class: "donations", alt: "Donations - FreeUKGenealogy" %></a>
-          <%#= banner_header %>
-          <script src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-                                <ins class="adsbygoogle adSenseBanner"
-                                style="display:inline-block;width:728px;height:90px"
-                                data-ad-client = "#{data_ad_client}"
-                                data-ad-slot = "#{data_ad_slot_header}">
-                                </ins>
-                                <script>
-                                    if(window.googlefc.getConsentStatus() == 1) {
-                                        (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0
-                                    } else  {
-                                        (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1
-                                    }
-                                  $(document).ready(function(){(adsbygoogle = window.adsbygoogle || []).push({})});
-                                </script>
+          <%= banner_header %>
         </div>
       <% end %>
       <% when 'freereg' %>
