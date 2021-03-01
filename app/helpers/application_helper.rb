@@ -602,25 +602,25 @@ module ApplicationHelper
 
   def fullwidth_adsense_freecen
     banner = <<-HTML
-    <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
-    
-    <!-- FreeCEN2 Transcriber Registration (Responsive) -->
-    <ins class="adsbygoogle adSenseBanner"
-    style="display:inline-block;width:728px;height:90px"
-    data-ad-client="#{data_ad_client}"
-    data-ad-slot="#{data_ad_slot_fullwidth}">
-    </ins>
-    <script>
-      (adsbygoogle = window.adsbygoogle || []).push({});
-    </script>
-        HTML
-        if Rails.env.development?
-          banner = <<-HTML
-          <img src="http://dummyimage.com/728x90/000/fff/?text=banner+ad" alt='Banner add'>
-          HTML
-        end
-        banner.html_safe
-      end
+      <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+      
+      <!-- FreeCEN2 Transcriber Registration (Responsive) -->
+        <ins class="adsbygoogle adSenseBanner"
+        style="display:inline-block;width:728px;height:90px"
+        data-ad-client="#{data_ad_client}"
+        data-ad-slot="#{data_ad_slot_fullwidth}">
+        </ins>
+      <script>
+        (adsbygoogle = window.adsbygoogle || []).push({});
+      </script>
+    HTML
+    if Rails.env.development?
+      banner = <<-HTML
+      <img src="http://dummyimage.com/728x90/000/fff/?text=banner+ad" alt='Banner add'>
+      HTML
+    end
+    banner.html_safe
+  end
 
                     def adsence_right_side_banner
                       banner = <<-HTML
