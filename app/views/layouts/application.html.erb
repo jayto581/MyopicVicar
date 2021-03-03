@@ -25,6 +25,14 @@
           })(window,document,'script','dataLayer','<%= "#{gtm_key_value}"%>');
       </script>
       <!--End Google Tag Manager -->
+      <script async src="https://www.googletagmanager.com/gtag/js?id=UA-89287207-1"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'UA-89287207-1');
+      </script>
     <% end %>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
     <meta charset="utf-8"/>
