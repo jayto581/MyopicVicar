@@ -95,6 +95,25 @@
     <%= javascript_include_tag "javascripts/freecen_gdpr.js" if appname.downcase == 'freecen'%>
     <script src="https://use.fontawesome.com/5b8044f85d.js"></script>
     <%= csrf_meta_tags %>
+
+    <script>
+  // Make sure that the properties exist on the window.
+      window.googlefc = window.googlefc || {};
+      window.googlefc.ccpa = window.googlefc.ccpa || {}
+      window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+
+  // Queue the callback on the callbackQueue.
+      googlefc.callbackQueue.push({
+        'CONSENT_DATA_READY':
+        function () {
+          if (googlefc.getConsentStatus() == googlefc.ConsentStatusEnum.CONSENTED_TO_PERSONALIZED_ADS ||
+              googlefc.getConsentStatus() == googlefc.ConsentStatusEnum.CONSENT_NOT_REQUIRED) {
+            (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0;
+            // Insert/trigger 3rd party ad tag.
+          };
+        }
+      });
+  </script>
   </head>
   <body ontouchstart class="offcanvas  offcanvas--rev">
     <% if appname_downcase == 'freecen' %>
