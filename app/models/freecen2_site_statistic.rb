@@ -14,14 +14,6 @@ class Freecen2SiteStatistic
 
   field :records, type: Hash # [chapman_code]
 
-
-  field :records_added, type: Hash
-  field :vld_files_added, type: Hash
-  field :csv_files_added, type: Hash
-  field :csv_files_incorporated_added, type: Hash
-  field :vld_entries_added, type: Hash
-  field :csv_entries_added, type: Hash
-
   index({ interval_end: -1})
 
   class << self
@@ -32,15 +24,12 @@ class Freecen2SiteStatistic
       #last_midnight = Time.new(2019,12,22)
       # find the existing record if it exists
       stat = Freecen2SiteStatistic.find_by(interval_end: last_midnight)
-      previous_statistic = Freecen2SiteStatistic.find_by(interval_end: previous_midnight)
-      previous_records = previous_statistic.records if previous_statistic.present?
       stat = Freecen2SiteStatistic.new if stat.blank?
       # populate it
       stat.interval_end = last_midnight
-      target_day = last_midnight - 1.day
-      stat.year = target_day.year
-      stat.month = target_day.month
-      stat.day = target_day.day
+      stat.year = time.year
+      stat.month = time.month
+      stat.day = time.day
       searches = Freecen2SearchStatistic.find_by(interval_end: last_midnight)
 
       stat.searches = searches.present? ? searches.searches : 0
@@ -70,6 +59,8 @@ class Freecen2SiteStatistic
         records[:total][:total][:csv_files_incorporated] += records[:total][year][:csv_files_incorporated]
         records[:total][year][:csv_entries] = totals_csv_entries[year]
         records[:total][:total][:csv_entries] += records[:total][year][:csv_entries]
+        records[:total][year][:csv_entries_incorporated] = totals_csv_individuals[year]
+        records[:total][:total][:csv_entries_incorporated] += records[:total][year][:csv_entries_incorporated]
         records[:total][year][:added_vld_files] = added_vld_files[year]
         records[:total][:total][:added_vld_files] += records[:total][year][:added_vld_files]
         records[:total][year][:added_vld_entries] = added_vld_entries[year]
@@ -79,7 +70,7 @@ class Freecen2SiteStatistic
         records[:total][year][:added_csv_entries] = added_csv_entries[year]
         records[:total][:total][:added_csv_entries] += records[:total][year][:added_csv_entries]
         records[:total][year][:added_csv_entries_incorporated] = added_csv_individuals[year]
-        records[:total][:total][:csv_entries_incorporated] += records[:total][year][:added_csv_entries_incorporated]
+        records[:total][:total][:added_csv_entries_incorporated] += records[:total][year][:added_csv_entries_incorporated]
         records[:total][year][:search_records] = SearchRecord.where(record_type: year).count
         records[:total][:total][:search_records] += records[:total][year][:search_records]
       end
@@ -113,6 +104,8 @@ class Freecen2SiteStatistic
           records[county][:total][:csv_files_incorporated] += records[county][year][:csv_files_incorporated]
           records[county][year][:csv_entries] = totals_csv_entries[year]
           records[county][:total][:csv_entries] += records[county][year][:csv_entries]
+          records[county][year][:csv_entries_incorporated] = totals_csv_individuals[year]
+          records[county][:total][:csv_entries_incorporated] += records[county][year][:csv_entries_incorporated]
           records[county][year][:added_vld_files] = added_vld_files[year]
           records[county][:total][:added_vld_files] += records[county][year][:added_vld_files]
           records[county][year][:added_vld_entries] = added_vld_entries[year]
