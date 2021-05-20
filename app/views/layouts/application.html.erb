@@ -8,6 +8,19 @@
   <!--<![endif]-->
   <head>
     <script src="/prebid_ads.js" type="text/javascript"></script>
+    <% unless GdprCountries::FOLLOWED_COUNTRIES.include?(user_location) %>
+      <script>
+        (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=1;
+        window.update_personalized_adverts = function (preference) {
+              if(preference == 'accept') {
+                (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=0;
+              } else if(preference == 'deny') {
+                (adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds=1;
+              }
+            };
+        (adsbygoogle=window.adsbygoogle||[]).pauseAdRequests=0;
+      </script>
+    <% end %>
     <% if appname_downcase == 'freereg' %>
       <% unless current_page?('/cms/refinery/login') || current_page?('/cms/home/page-not-found') || current_page?('/cms/refinery/users/login') %>
         <%= banner_header_freereg %>
