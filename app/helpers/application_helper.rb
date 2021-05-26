@@ -724,11 +724,11 @@ module ApplicationHelper
   end
 
   def banner_header
-    #if GdprCountries::FOLLOWED_COUNTRIES.include?(user_location)
+    if GdprCountries::FOLLOWED_COUNTRIES.include?(user_location)
       banner_header_gdpr
-    #else
-      #banner = banner_header_non_gdpr
-    #end
+    else
+      banner = banner_header_non_gdpr
+    end
   end
 
 
