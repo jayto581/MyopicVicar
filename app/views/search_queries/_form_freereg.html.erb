@@ -180,7 +180,10 @@
   </script>
   <script type="text/javascript" >
     <% if @search_query && @search_query.chapman_codes.size > 0 %>
-      var selection=<%= raw(PlaceCache.where(:chapman_code => @search_query.chapman_codes.first).first.places_json) %>;
+      <% place_cache = PlaceCache.where(:chapman_code => @search_query.chapman_codes.first).first %>
+      <% if place_cache.present? %>
+        var selection=<%= raw(place_cache.places_json) %>;
+      <% end %>
       <% if @search_query.places.size > 0 %>
         selection["selected"]="<%= @search_query.places.first.id %>";
       <% end %>
