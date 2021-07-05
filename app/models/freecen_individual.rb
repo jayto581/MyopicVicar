@@ -21,12 +21,14 @@ class FreecenIndividual
   field :disability, type: String
   field :language, type: String
   field :notes, type: String
+
   belongs_to :freecen1_vld_file, index: true
   belongs_to :freecen_dwelling, index: true
   belongs_to :freecen1_vld_entry, index: true
   belongs_to :freecen2_piece, optional: true, index: true
   belongs_to :freecen_piece, optional: true, index: true
-  has_one :search_record
+
+  has_one :search_record, dependent: :restrict_with_error
 
   before_destroy :destroy_search_record
 

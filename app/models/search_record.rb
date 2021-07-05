@@ -76,28 +76,36 @@ class SearchRecord
   field :location_names, type: Array, default: []
   field :search_soundex, type: Array, default: []
 
+  CEN_CHAPMAN_INDEXES = {
+    'county_ln_rt_sd' => ['chapman_code', 'search_names.last_name', 'record_type', 'search_date'],
+    'county_ln_fn_rt_sd' => ['chapman_code', 'search_names.last_name', 'search_names.first_name', 'record_type', 'search_date'],
+    'county_lnsdx_rt_sd' => ['chapman_code', 'search_soundex.last_name', 'record_type', 'search_date'],
+    'county_lnsdx_fnsdx_rt_sd' => ['chapman_code', 'search_soundex.last_name', 'search_soundex.first_name', 'record_type', 'search_date']
+  }.freeze
 
-  CEN_INDEXES = {
-    'ln_rt_sd' => ['search_names.last_name', 'record_type', 'search_date'],
-    'ln_fn_rt_sd' => ['search_names.last_name', 'search_names.first_name', 'record_type', 'search_date'],
-    'lnsdx_rt_sd' => ['search_soundex.last_name', 'record_type', 'search_date'],
-    'lnsdx_fnsdx_rt_sd' => ['search_soundex.last_name', 'search_soundex.first_name', 'record_type', 'search_date'],
+  CEN_BIRTH_CHAPMAN_INDEXES = {
+    'birth_chapman_code_names_date' => ['birth_chapman_code', 'search_names.last_name', 'search_names.first_name', 'record_type', 'search_date'],
+    'birth_chapman_code_last_name_date' => ['birth_chapman_code', 'search_names.last_name', 'record_type', 'search_date'],
+    'birth_chapman_code_soundex_names_date' => ['birth_chapman_code', 'search_soundex.last_name', 'search_soundex.first_name', 'record_type', 'search_date'],
+    'birth_chapman_code_soundex_last_name_date' => ['birth_chapman_code', 'search_soundex.last_name', 'record_type', 'search_date']
+  }.freeze
+
+  CEN_PLACE_INDEXES = {
     'place_ln_rt_sd' => ['place_id', 'search_names.last_name', 'record_type', 'search_date'],
     'place_ln_fn_rt_sd' => ['place_id', 'search_names.last_name', 'search_names.first_name', 'record_type', 'search_date'],
     'place_lnsdx_rt_sd' => ['place_id', 'search_soundex.last_name', 'record_type', 'search_date'],
     'place_lnsdx_fnsdx_rt_sd' => ['place_id', 'search_soundex.last_name', 'search_soundex.first_name', 'record_type', 'search_date'],
     'place_fn_rt_sd' => ['place_id', 'search_names.first_name', 'record_type', 'search_date'],
     'place_fnsdx_rt_sd' => ['place_id', 'search_soundex.first_name', 'record_type', 'search_date'],
-    'place_rt_sd' => ['place_id', 'record_type', 'search_date'],
-    'county_ln_rt_sd' => ['chapman_code', 'search_names.last_name', 'record_type', 'search_date'],
-    'county_ln_fn_rt_sd' => ['chapman_code', 'search_names.last_name', 'search_names.first_name', 'record_type', 'search_date'],
-    'county_lnsdx_rt_sd' => ['chapman_code', 'search_soundex.last_name', 'record_type', 'search_date'],
-    'county_lnsdx_fnsdx_rt_sd' => ['chapman_code', 'search_soundex.last_name', 'search_soundex.first_name', 'record_type', 'search_date'],
-    'birth_chapman_code_names_date' => ['birth_chapman_code', 'search_names.last_name', 'search_names.first_name', 'record_type', 'search_date'],
-    'birth_chapman_code_last_name_date' => ['birth_chapman_code', 'search_names.last_name', 'record_type', 'search_date'],
-    'birth_chapman_code_soundex_names_date' => ['birth_chapman_code', 'search_soundex.last_name', 'search_soundex.first_name', 'record_type', 'search_date'],
-    'birth_chapman_code_soundex_last_name_date' => ['birth_chapman_code', 'search_soundex.last_name', 'record_type', 'search_date']
-  }
+    'place_rt_sd' => ['place_id', 'record_type', 'search_date']
+  }.freeze
+
+  CEN_BASIC_INDEXES = {
+    'ln_rt_sd' => ['search_names.last_name', 'record_type', 'search_date'],
+    'ln_fn_rt_sd' => ['search_names.last_name', 'search_names.first_name', 'record_type', 'search_date'],
+    'lnsdx_rt_sd' => ['search_soundex.last_name', 'record_type', 'search_date'],
+    'lnsdx_fnsdx_rt_sd' => ['search_soundex.last_name', 'search_soundex.first_name', 'record_type', 'search_date']
+  }.freeze
 
   REG_CHAPMAN_INDEXES = {
     'county_ln_rt_sd_ssd' => ['chapman_code', 'search_names.last_name', 'record_type', 'search_date', 'secondary_search_date'],
@@ -259,6 +267,10 @@ class SearchRecord
 
 
     def extract_fields(fields, params, current_field)
+      p
+      p fields
+      p params
+      p current_field
 
       if params.is_a?(Hash)
         # walk down the syntax tree
@@ -282,7 +294,10 @@ class SearchRecord
 
     def fields_from_params(search_params)
       fields = []
+      p search_params
       search_params.each_pair do |key, value|
+        p key
+        p value
         extract_fields(fields, value, key.to_s)
       end
       fields.uniq
@@ -370,13 +385,25 @@ class SearchRecord
 
     def index_hint(search_params)
       search_fields = fields_from_params(search_params)
+      p search_fields
       case App.name_downcase
       when 'freebmd'
         candidates = BMD_INDEXES.keys
         index_component = BMD_INDEXES
       when 'freecen'
-        candidates = CEN_INDEXES.keys
-        index_component = CEN_INDEXES
+        if search_fields.include?('place_id')
+          candidates = CEN_PLACE_INDEXES.keys
+          index_component = CEN_PLACE_INDEXES
+        elsif search_fields.include?('chapman_code')
+          candidates = CEN_CHAPMAN_INDEXES.keys
+          index_component = CEN_CHAPMAN_INDEXES
+        elsif search_fields.include?('birth_chapman_code')
+          candidates = CEN_BIRTH_CHAPMAN_INDEXES.keys
+          index_component = CEN_BIRTH_CHAPMAN_INDEXES
+        else
+          candidates = CEN_BASIC_INDEXES.keys
+          index_component = CEN_BASIC_INDEXES
+        end
       when 'freereg'
         if search_fields.include?('place_id')
           candidates = REG_PLACE_INDEXES.keys
@@ -542,7 +569,7 @@ class SearchRecord
     new_names.delete_if { |_key, value| original_copy.has_value?(value) }
     #remove search names from the search record that are no longer required
     original_names.each_value do |value|
-      search_names.where(value).destroy_all
+      search_names.where(value).delete_all
     end
     #add the new search names to the existing search record
     new_names.each_value { |value| search_names.new(value) }
@@ -670,7 +697,7 @@ class SearchRecord
       place = Freecen2Place.find_by(_id: freecen2_place_id)
       particles << place.place_name if place.present?
     else
-      particles << self.place.place_name if self.place.place_name
+      particles << self.place.place_name if self.place.present?
     end
     # finally date
     particles << search_dates.first
