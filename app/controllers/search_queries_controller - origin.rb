@@ -30,13 +30,9 @@ class SearchQueriesController < ApplicationController
     @search_query['first_name'] = @search_query['first_name'].strip if @search_query['first_name'].present?
     @search_query['last_name'] = @search_query['last_name'].strip if @search_query['last_name'].present?
     @search_query['chapman_codes'] = ['', 'ERY', 'NRY', 'WRY'] if @search_query['chapman_codes'][1].eql?('YKS')
-    if @search_query['birth_chapman_codes'][1].eql?('YKS')
-      @search_query['birth_chapman_codes'] = ['', 'ERY', 'NRY', 'WRY']
-    end
+    @search_query['birth_chapman_codes'] = ['', 'ERY', 'NRY', 'WRY'] if @search_query['birth_chapman_codes'][1].eql?('YKS')
     @search_query['chapman_codes'] = ['', 'ALD', 'GSY', 'JSY', 'SRK'] if @search_query['chapman_codes'][1].eql?('CHI')
-    if @search_query['birth_chapman_codes'][1].eql?('CHI')
-      @search_query['birth_chapman_codes'] = ['', 'ALD', 'GSY', 'JSY', 'SRK']
-    end
+    @search_query['birth_chapman_codes'] = ['', 'ALD', 'GSY', 'JSY', 'SRK'] if @search_query['birth_chapman_codes'][1].eql?('CHI')
     @search_query.session_id = request.session_options[:id]
   end
 
@@ -191,12 +187,8 @@ class SearchQueriesController < ApplicationController
       session[:query] = nil
       flash[:notice] = 'Your search exceeded the maximum permitted time. Please review your search criteria. Advice is contained in the Help pages.'
     else
-      if @search_query.present? && @search_query.id.present?
-        logger.warn("#{appname_upcase}:SEARCH: Search #{session[:query]} had a problem #{message}")
-      end
-      unless @search_query.present? && @search_query.id.present?
-        logger.warn("#{appname_upcase}:SEARCH: Search #{message}")
-      end
+      logger.warn("#{appname_upcase}:SEARCH: Search #{session[:query]} had a problem #{message}") if @search_query.present? && @search_query.id.present?
+      logger.warn("#{appname_upcase}:SEARCH: Search #{message}") unless @search_query.present? && @search_query.id.present?
       flash[:notice] = 'Your search encountered a problem please contact us with this message '
     end
     redirect_to new_search_query_path(search_id: @search_query)
@@ -218,72 +210,16 @@ class SearchQueriesController < ApplicationController
 
   def show
     @search_query, proceed, message = SearchQuery.check_and_return_query(params[:id])
-
-    if params[:sort_option].present?
-
-      @sort_condition = params[:sort_option]
-
-      case appname_downcase
-      when 'freereg'
-        freereg_sortby = { 'Person' => 'transcript_names',
-                           'Record Type' => 'record_type',
-                           'Event Date' => 'search_date',
-                           'County' => 'chapman_code',
-                           'Place' => 'location'}
-        order_field = freereg_sortby[params[:sort_option]]
-      when 'freebmd'
-        order_field = params[:sort_option]
-      end
-
-      if order_field == @search_query.order_field
-        # reverse the directions
-        @search_query.order_asc = !@search_query.order_asc unless params[:page].present?
-      else
-        @search_query.order_field = order_field
-        @search_query.order_asc = true
-      end
-      @search_query.save!
-    end
-
-    @search_results, success, error_type = @search_query.search_records.to_a if params[:saved_search].present?
     redirect_back(fallback_location: new_search_query_path, notice: message) && return unless proceed
 
-    if @search_query.result_count.blank?
-      flash[:notice] = 'Your search results are not available. Please repeat your search'
-    end
+    flash[:notice] = 'Your search results are not available. Please repeat your search' if @search_query.result_count.blank?
     redirect_back(fallback_location: new_search_query_path) && return if @search_query.result_count.blank?
-
     if @search_query.result_count >= FreeregOptionsConstants::MAXIMUM_NUMBER_OF_RESULTS
       @result_count = @search_query.result_count
       @search_results = []
       @ucf_results = []
     else
       response, @search_results, @ucf_results, @result_count = @search_query.get_and_sort_results_for_display
-
-      if params[:filter_option].present?
-
-        if params[:filter_option] == 'Clear Filter'
-          params[:filter_option] = nil
-        else
-          @filter_condition = params[:filter_option]
-
-          case appname_downcase
-          when 'freereg'
-            freereg_filterby = { 'Baptism' => 'ba',
-                                 'Marriage' => 'ma',
-                                 'Burial' => 'bu'}
-            @reg_record_type = freereg_filterby[params[:filter_option]]
-            @search_results = filtered_results_freereg
-
-            if @search_results.blank?
-              flash[:notice] = 'Your filter request found no records. Please select a different filter'
-            end
-          when 'freebmd'
-            @search_results = filtered_results if RecordType::BMD_RECORD_TYPE_ID.include?(@filter_condition.to_i)
-          end
-        end
-      end
-
       if !response || @search_results.nil? || @search_query.result_count.nil?
         logger.warn("#{appname_upcase}:SEARCH_ERROR:search results no longer present for #{@search_query.id}")
         flash[:notice] = 'Your search results are not available. Please repeat your search'
@@ -296,9 +232,7 @@ class SearchQueriesController < ApplicationController
     @search_query, proceed, message = SearchQuery.check_and_return_query(params[:id])
     redirect_back(fallback_location: new_search_query_path, notice: message) && return unless proceed
 
-    if @search_query.result_count.blank?
-      flash[:notice] = 'Your search results are not available. Please repeat your search'
-    end
+    flash[:notice] = 'Your search results are not available. Please repeat your search' if @search_query.result_count.blank?
     redirect_back(fallback_location: new_search_query_path) && return if @search_query.result_count.blank?
 
     @printable_format = true
@@ -330,14 +264,6 @@ class SearchQueriesController < ApplicationController
     @chapman_codes = ChapmanCode::CODES
     render :new unless @search_query.save
     redirect_to search_query_path(@search_query)
-  end
-
-  def filtered_results
-    @search_results.select { |r| r['RecordTypeID'] == @filter_condition.to_i }
-  end
-
-  def filtered_results_freereg
-    @search_results.select { |r| r['record_type'] == @reg_record_type }
   end
 
   private
