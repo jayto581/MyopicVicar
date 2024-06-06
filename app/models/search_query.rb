@@ -464,7 +464,26 @@ class SearchQuery
       ucf_results = self.ucf_results if self.ucf_results.present?
       ucf_results = [] if ucf_results.blank?
       response = true
-      return response, search_results.map{ |h| SearchRecord.new(h) }, ucf_results, result_count
+      return response, search_results.map { |h| SearchRecord.new(h) }, ucf_results, result_count
+    else
+      response = false
+      return response
+    end
+  end
+
+  def get_and_sort_results_for_display_jc
+    if self.search_result.records.respond_to?(:values)
+      search_results = self.search_result.records.values
+      search_results = self.filter_name_types(search_results)
+      search_results = self.filter_embargoed(search_results)
+      search_results = self.filter_census_addional_fields(search_results) if MyopicVicar::Application.config.template_set == 'freecen'
+      result_count = search_results.length.present? ? search_results.length : 0
+      search_results = self.sort_results_jc(search_results) unless search_results.nil?
+
+      ucf_results = self.ucf_results if self.ucf_results.present?
+      ucf_results = [] if ucf_results.blank?
+      response = true
+      return response, search_results.map { |h| SearchRecord.new(h) }, ucf_results, result_count
     else
       response = false
       return response
@@ -863,7 +882,7 @@ class SearchQuery
   def secondary_date_results
     @secondary_search_params = @search_parameters
     @secondary_search_params[:secondary_search_date] = @secondary_search_params[:search_date]
-    @secondary_search_params.delete_if { |key, value| key == :search_date }
+    @secondary_search_params.delete_if { |key, _value| key == :search_date }
     # @secondary_search_params[:record_type] = { '$in' => [RecordType::BAPTISM] }
     @search_index = SearchRecord.index_hint(@search_parameters)
     logger.warn("#{App.name_upcase}:SSD_SEARCH_HINT: #{@search_index}")
@@ -940,6 +959,100 @@ class SearchQuery
           end
         end
       end
+    end
+    results
+  end
+
+  def sort_results_jc(results)
+    # next reorder in memory
+    if results.present?
+      case order_field
+      when *selected_sort_fields
+        order = order_field.to_sym
+        # results.each do |rec|
+        # end
+        # results.sort! do |x, y|
+        #   if order_asc
+        #     (x[order] || '') <=> (y[order] || '')
+        #   else
+        #     (y[order] || '') <=> (x[order] || '')
+        #   end
+        # end
+
+        if order_asc
+          results.sort_by! { |r| [r[:order].to_s, r[:search_date].to_s] }
+        else
+          results.sort_by! { |r| [r[:order].to_s, r[:search_date].to_s] }.reverse!
+        end
+
+      when SearchOrder::DATE
+        # if order_asc
+        #   results.sort! { |x, y| (x[:search_date] || '') <=> (y[:search_date] || '') }
+        # else
+        #   results.sort! { |x, y| (y[:search_date] || '') <=> (x[:search_date] || '') }
+        # end
+
+        if order_asc
+          results.sort_by! { |r| r[:search_date].to_s } # ascending order
+        else
+          results.sort_by! { |r| [r[:search_date].to_s] }.reverse! # descending order
+        end
+
+      when SearchOrder::LOCATION
+        # if order_asc
+        #   results.sort! do |x, y|
+        #     compare_location(x, y)
+        #   end
+        # else
+        #   results.sort! do |x, y|
+        #     compare_location(y, x) # note the reverse order
+        #   end
+        # end
+
+        if order_asc
+          results.sort_by! { |r|
+            [r[:location_name[0]].to_s,
+             r[:location_name[1]].to_s,
+             r[:location_name[2]].to_s,
+             r[:search_date].to_s]
+          }
+        else
+          results.sort_by! { |r|
+            [r[:location_name[0]].to_s,
+             r[:location_name[1]].to_s,
+             r[:location_name[2]].to_s,
+             r[:search_date].to_s]
+          }.reverse!
+        end
+
+
+      when SearchOrder::NAME
+        # if order_asc
+        #   results.sort! do |x, y|
+        #     compare_name(x, y)
+        #   end
+        # else
+        #   results.sort! do |x, y|
+        #     compare_name(y, x) # note the reverse order
+        #   end
+        # end
+
+        if order_asc
+          results.sort_by! { |r|
+            [r[:transcript_names][0][:last_name].to_s,
+             r[:transcript_names][0][:first_name].to_s,
+             r[:search_date].to_s]
+          }
+        else
+          results.sort_by! { |r|
+            [r[:transcript_names][0][:last_name].to_s,
+             r[:transcript_names][0][:first_name].to_s,
+             r[:search_date].to_s]
+          }.reverse!
+        end
+
+      end
+
     end
     results
   end
@@ -1055,6 +1168,6 @@ class SearchQuery
   private
 
   def selected_sort_fields
-    [ SearchOrder::COUNTY, SearchOrder::BIRTH_COUNTY, SearchOrder::BIRTH_PLACE, SearchOrder::TYPE ]
+    [SearchOrder::COUNTY, SearchOrder::BIRTH_COUNTY, SearchOrder::BIRTH_PLACE, SearchOrder::TYPE]
   end
 end

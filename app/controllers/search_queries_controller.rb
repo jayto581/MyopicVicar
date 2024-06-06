@@ -235,11 +235,11 @@ class SearchQueriesController < ApplicationController
       if MyopicVicar::Application.config.template_set == 'freebmd'
         response, @search_results, @ucf_results, @result_count = @search_query.get_bmd_search_results
       else
-        response, @search_results, @ucf_results, @result_count = @search_query.get_and_sort_results_for_display
+        response, @search_results, @ucf_results, @result_count = @search_query.get_and_sort_results_for_display_jc
       end
     end
 
-    check_filter_by
+    set_filter_by
     create_paginatable_array(query: @search_query, results: @search_results)
 
     if !response || @search_results.nil? || @search_query.result_count.nil?
@@ -267,7 +267,7 @@ class SearchQueriesController < ApplicationController
       if MyopicVicar::Application.config.template_set == 'freebmd'
         response, @search_results, @ucf_results, @result_count = @search_query.get_bmd_search_results 
       else
-        response, @search_results, @ucf_results, @result_count = @search_query.get_and_sort_results_for_display
+        response, @search_results, @ucf_results, @result_count = @search_query.get_and_sort_results_for_display_jc
       end
 
       @paginatable_array = @search_results
@@ -312,7 +312,7 @@ class SearchQueriesController < ApplicationController
     @paginatable_array
   end
 
-  def check_filter_by
+  def set_filter_by
     if params[:filter_option].present?
       if params[:filter_option] == 'Clear Filter'
         params[:filter_option] = nil
