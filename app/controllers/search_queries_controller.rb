@@ -254,12 +254,13 @@ class SearchQueriesController < ApplicationController
 
     flash[:notice] = 'Your search results are not available. Please repeat your search' if @search_query.result_count.blank?
     redirect_back(fallback_location: new_search_query_path) && return if @search_query.result_count.blank?
+    response, @search_results, @ucf_results, @result_count = @search_query.get_and_sort_results_for_display
     if @search_query.result_count >= FreeregOptionsConstants.const_get("MAXIMUM_NUMBER_OF_RESULTS_#{App.name_upcase}")
-      @result_count = @search_query.result_count
+      #@result_count = @search_query.result_count
       @search_results = []
       @ucf_results = []
     else
-      response, @search_results, @ucf_results, @result_count = @search_query.get_and_sort_results_for_display
+      #response, @search_results, @ucf_results, @result_count = @search_query.get_and_sort_results_for_display
       if !response || @search_results.nil? || @search_query.result_count.nil?
         logger.warn("#{appname_upcase}:SEARCH_ERROR:search results no longer present for #{@search_query.id}")
         flash[:notice] = 'Your search results are not available. Please repeat your search'
