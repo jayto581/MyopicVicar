@@ -849,133 +849,27 @@ class SearchQuery
     params
   end
 
-  def get_and_sort_results_for_display
-    if self.search_result.records.respond_to?(:values)
-      # Records are already filtered in the search method, so just get them
-      search_results = self.search_result.records.values
-
-      # Use the result_count that was set during persist_results (already reflects filtered count)
-      result_count = self.result_count || 0
-
-      # Sort the already-filtered results
-      search_results = self.sort_results(search_results) unless search_results.nil?
-
-      # Get UCF results if present
-      ucf_results = self.ucf_results if self.ucf_results.present?
-      ucf_results = [] if ucf_results.blank?
-
-      response = true
-      return response, search_results.map{ |h| SearchRecord.new(h) }, ucf_results, result_count
-    else
-      response = false
-      return response
-    end
-  end
-
   def search
     @search_parameters = search_params
     @search_index = SearchRecord.index_hint(@search_parameters)
     logger.warn("#{App.name_upcase}:SEARCH_HINT: #{@search_index}")
     logger.warn("#{App.name_upcase}:SEARCH_PARAMETERS: #{@search_parameters}")
     update_attribute(:search_index, @search_index)
-    
-    max_results = FreeregOptionsConstants.const_get("MAXIMUM_NUMBER_OF_RESULTS_#{App.name_upcase}")
-    fetch_limit = (max_results * 1.5).to_i
-    
-    records = SearchRecord.collection.find(@search_parameters)
-                             .hint(@search_index.to_s)
-                             .max_time_ms(Rails.application.config.max_search_time)
-                             #.limit(fetch_limit)
-    
-    # Apply all filters in a single iteration using lazy enumeration
-    filtered_records = apply_all_filters(records).first(max_results)
-    
-    persist_results(filtered_records)
-    
-    # Apply filters to additional results as well
-    if App.name == 'FreeREG' && (result_count < max_results)
-      secondary_records = secondary_date_results
-      filtered_secondary = apply_all_filters(secondary_records)
-      remaining_slots = max_results - result_count
-      filtered_secondary = filtered_secondary.first(remaining_slots) if remaining_slots > 0
-      
-      persist_additional_results(filtered_secondary) if filtered_secondary.any?
-    end
-    
-    records = search_ucf if can_query_ucf? && result_count < max_results
+    records = SearchRecord.collection.find(@search_parameters).hint(@search_index.to_s).max_time_ms(Rails.application.config.max_search_time).limit(FreeregOptionsConstants.const_get("MAXIMUM_NUMBER_OF_RESULTS_#{App.name_upcase}"))
+    persist_results(records)
+    persist_additional_results(secondary_date_results) if App.name == 'FreeREG' && (result_count < FreeregOptionsConstants.const_get("MAXIMUM_NUMBER_OF_RESULTS_#{App.name_upcase}"))
+    records = search_ucf if can_query_ucf? && result_count < FreeregOptionsConstants.const_get("MAXIMUM_NUMBER_OF_RESULTS_#{App.name_upcase}")
     records
   end
 
-  # New method to apply all filters in a single pass
-  def apply_all_filters(records)
-    records.lazy.select do |record|
-      # Apply embargo filter first (cheapest check)
-      next false if record[:embargoed].present? && 
-                    record[:release_year].present? && 
-                    record[:release_year].to_i > DateTime.now.year.to_i
-      
-      # Apply name type filter
-      name_match = false
-      if record[:search_names].present?
-        record[:search_names].each do |search_name|
-          if fuzzy
-            name_match = include_record_for_fuzzy_search(search_name)
-          elsif wildcard_search
-            name_match = include_record_for_wildcard_search(search_name)
-          else
-            name_match = include_record_for_standard_search(search_name)
-          end
-          break if name_match
-        end
-      end
-      next false unless name_match
-      
-      # Apply census additional fields filter (only for FreeCEN)
-      if MyopicVicar::Application.config.template_set == 'freecen' && !no_additional_census_fields?
-        individual = FreecenIndividual.find(record[:freecen_individual_id]) unless record[:freecen_csv_entry_id].present?
-        individual = FreecenCsvEntry.find(record[:freecen_csv_entry_id]) if record[:freecen_csv_entry_id].present?
-        next false if individual.blank?
-        
-        next false unless individual_sex?(individual) && 
-                          individual_marital_status?(individual) && 
-                          individual_language?(individual) &&
-                          individual_disabled?(individual) && 
-                          individual_occupation?(individual)
-      end
-      
-      true
-    end
-  end
-
   def secondary_date_results
-    @secondary_search_params = @search_parameters.dup
-    date_range = @secondary_search_params[:search_date]
-    @secondary_search_params[:secondary_search_date] = date_range
-
-    # Add constraint to ensure records with primary dates outside the range are not found.
-    # This prevents records from appearing in sub-ranges where their primary date doesn't belong.
-    # We use $or to allow records with missing/blank primary dates to still be found via secondary dates,
-    # or records where the primary date is also witqhin the range.
-    if date_range.present?
-      @secondary_search_params[:$or] = [
-        { search_date: nil },
-        { search_date: '' },
-        { search_date: date_range }
-      ]
-      # Remove the original search_date constraint since we're replacing it with $or
-      @secondary_search_params.delete(:search_date)
-    end
-
-    @search_index = SearchRecord.index_hint(@secondary_search_params)
+    @secondary_search_params = @search_parameters
+    @secondary_search_params[:secondary_search_date] = @secondary_search_params[:search_date]
+    @secondary_search_params.delete_if { |key, value| key == :search_date }
+    # @secondary_search_params[:record_type] = { '$in' => [RecordType::BAPTISM] }
+    @search_index = SearchRecord.index_hint(@search_parameters)
     logger.warn("#{App.name_upcase}:SSD_SEARCH_HINT: #{@search_index}")
-
-    max_results = FreeregOptionsConstants::MAXIMUM_NUMBER_OF_RESULTS
-    fetch_limit = (max_results * 1.5).to_i  # Fetch 50% more to account for filtering
-
-    secondary_records = SearchRecord.collection.find(@secondary_search_params)
-                                    .hint(@search_index.to_s)
-                                    .max_time_ms(Rails.application.config.max_search_time)
-                                    .limit(fetch_limit)
+    secondary_records = SearchRecord.collection.find(@secondary_search_params).hint(@search_index.to_s).max_time_ms(Rails.application.config.max_search_time).limit(FreeregOptionsConstants::MAXIMUM_NUMBER_OF_RESULTS)
     secondary_records
   end
 
